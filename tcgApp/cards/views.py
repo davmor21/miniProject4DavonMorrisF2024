@@ -7,6 +7,9 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import Card, Collection
 
@@ -69,21 +72,15 @@ def submit(request, collection_id):
 
     return render(request, "cards/detail.html", {"collection": collection})
 
-import logging
 
-logger = logging.getLogger(__name__)
 
 @login_required(login_url="/users/login/")
 def remove_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
-
     if request.method == "POST":
-        logger.debug(f"Attempting to delete collection with ID: {collection_id}")
         collection.delete()  # Delete the collection
-        logger.debug(f"Collection with ID {collection_id} deleted successfully.")
         return redirect('cards:index')  # Redirect back to the home page after deletion
     else:
-        logger.debug(f"Invalid request method: {request.method} for collection with ID: {collection_id}")
         return redirect('cards:index')  # Redirect if method is not POST
 
 class CollectionForm(forms.ModelForm):
@@ -113,3 +110,19 @@ def add_collection(request):
         form = CollectionForm()
 
     return render(request, 'cards/add_collection.html', {'form': form})
+
+@csrf_exempt
+def set_theme(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Get the data from the POST request
+            theme = data.get('theme')
+            if theme not in ['light', 'dark']:
+                return JsonResponse({'error': 'Invalid theme'}, status=400)
+
+            # Store the theme in the session
+            request.session['theme'] = theme
+            return JsonResponse({'success': True})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid data format'}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
