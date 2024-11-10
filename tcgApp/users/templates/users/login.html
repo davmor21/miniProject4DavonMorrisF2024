@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form | crispy }}  {# If you're using django-crispy-forms #}
+                        {{ form | crispy }}
                         <button type="submit" class="btn btn-primary">Login</button>
                     </form>
                 </div>

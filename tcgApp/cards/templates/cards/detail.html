@@ -57,7 +57,6 @@
     <!-- Save button: Save changes and refresh page -->
     <button type="button" class="btn btn-success" onclick="saveChanges()">Save</button>
 
-    <!-- Save and Go Home button: Save changes and redirect to home page -->
     <button type="button" class="btn btn-primary" onclick="saveAndGoHome()">Go Home</button>
 </form>
 
@@ -102,11 +101,11 @@
     function removeCardFromCollection(cardId) {
         let form = document.getElementById("cardForm");
         if (form) {
-            // Create a hidden input to hold the cardId to be deleted
+         
             let input = document.createElement("input");
             input.type = "hidden";
-            input.name = "delete_card_ids[]";  // This is the key in the form
-            input.value = cardId;              // The value is the card's ID
+            input.name = "delete_card_ids[]";  
+            input.value = cardId;          
     
             // Append the hidden input to the form
             form.appendChild(input);
@@ -117,38 +116,38 @@
         // Hide the card element
         let cardElement = document.getElementById("card_" + cardId);
         if (cardElement) {
-            cardElement.style.display = "none";  // Hide the card element
+            cardElement.style.display = "none"; 
         }
     }
 
     function saveChanges() {
         const form = document.getElementById("cardForm");
 
-        // Add hidden input for saving changes
+        
         let saveInput = document.createElement("input");
         saveInput.type = "hidden";
-        saveInput.name = "save_changes";  // To indicate that this is a save operation
+        saveInput.name = "save_changes"; 
         saveInput.value = "true";
         form.appendChild(saveInput);
 
-        // Submit the form to save the changes
+       
         form.submit();
     }
 
     function saveAndGoHome() {
     const form = document.getElementById("cardForm");
 
-    // Add hidden input for saving changes
+  
     let saveInput = document.createElement("input");
     saveInput.type = "hidden";
-    saveInput.name = "save_changes";  // To indicate that this is a save operation
+    saveInput.name = "save_changes";  
     saveInput.value = "true";
     form.appendChild(saveInput);
 
-    // Update form action to redirect to home page after saving
-    form.action = "{% url 'cards:index' %}"; // Ensure we go to home after save
+   
+    form.action = "{% url 'cards:index' %}";
 
-    // Now submit the form to save changes and go to the home page
+    
     form.submit();
 }
 </script>
