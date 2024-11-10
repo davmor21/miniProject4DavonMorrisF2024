@@ -2,7 +2,7 @@
 {% block title %}Detail{% endblock %}
 
 {% block content %}
-<form id="cardForm" action="{% url 'cards:submit' collection.id %}" method="post">
+<form id="cardForm" action="{% url 'cards:submit' collection.id %}" method="post"> <!-- Action to submit changes -->
     {% csrf_token %}
     <fieldset>
         <legend><h1>{{ collection.collection_name }}</h1></legend>
@@ -54,7 +54,11 @@
         {% endfor %}
 
     </fieldset>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <!-- Save button: Save changes and refresh page -->
+    <button type="button" class="btn btn-success" onclick="saveChanges()">Save</button>
+
+    <!-- Save and Go Home button: Save changes and redirect to home page -->
+    <button type="button" class="btn btn-primary" onclick="saveAndGoHome()">Go Home</button>
 </form>
 
 <script>
@@ -110,17 +114,42 @@
             console.error("Form with id 'cardForm' not found!");
         }
 
-        // Log before trying to find the card element
-        console.log("Trying to find card with id 'card-" + cardId + "'");
-
-        // Attempt to hide the card element in the DOM
+        // Hide the card element
         let cardElement = document.getElementById("card_" + cardId);
         if (cardElement) {
             cardElement.style.display = "none";  // Hide the card element
-            console.log("Card with id 'card-" + cardId + "' hidden.");
-        } else {
-            console.error("Card element with id 'card-" + cardId + "' not found!");
         }
     }
+
+    function saveChanges() {
+        const form = document.getElementById("cardForm");
+
+        // Add hidden input for saving changes
+        let saveInput = document.createElement("input");
+        saveInput.type = "hidden";
+        saveInput.name = "save_changes";  // To indicate that this is a save operation
+        saveInput.value = "true";
+        form.appendChild(saveInput);
+
+        // Submit the form to save the changes
+        form.submit();
+    }
+
+    function saveAndGoHome() {
+    const form = document.getElementById("cardForm");
+
+    // Add hidden input for saving changes
+    let saveInput = document.createElement("input");
+    saveInput.type = "hidden";
+    saveInput.name = "save_changes";  // To indicate that this is a save operation
+    saveInput.value = "true";
+    form.appendChild(saveInput);
+
+    // Update form action to redirect to home page after saving
+    form.action = "{% url 'cards:index' %}"; // Ensure we go to home after save
+
+    // Now submit the form to save changes and go to the home page
+    form.submit();
+}
 </script>
 {% endblock %}

@@ -1,7 +1,8 @@
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
+from django import forms
 from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -66,7 +67,49 @@ def submit(request, collection_id):
                     card.quantity = int(new_quantity)
                     card.save()
 
-        # Redirect after processing
-        return HttpResponseRedirect(reverse("cards:results", args=(collection.id,)))
-
     return render(request, "cards/detail.html", {"collection": collection})
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+@login_required(login_url="/users/login/")
+def remove_collection(request, collection_id):
+    collection = get_object_or_404(Collection, pk=collection_id)
+
+    if request.method == "POST":
+        logger.debug(f"Attempting to delete collection with ID: {collection_id}")
+        collection.delete()  # Delete the collection
+        logger.debug(f"Collection with ID {collection_id} deleted successfully.")
+        return redirect('cards:index')  # Redirect back to the home page after deletion
+    else:
+        logger.debug(f"Invalid request method: {request.method} for collection with ID: {collection_id}")
+        return redirect('cards:index')  # Redirect if method is not POST
+
+class CollectionForm(forms.ModelForm):
+    class Meta:
+        model = Collection
+        fields = ['collection_name']  # Only ask for the collection name in the form
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['collection_name'].widget.attrs.update({'class': 'form-control'})
+        self.fields['collection_name'].label = "Collection Name"
+
+@login_required(login_url="/users/login/")
+def add_collection(request):
+    if request.method == 'POST':
+        # Handling form submission
+        form = CollectionForm(request.POST)
+        if form.is_valid():
+            # Create a new collection
+            collection = form.save(commit=False)
+            collection.user = request.user  # Optionally associate with the logged-in user
+            collection.pub_date = timezone.now()  # Set current timestamp as publish date
+            collection.save()
+            return redirect('cards:index')  # Redirect to the homepage after saving the new collection
+    else:
+        # If the request is GET, show an empty form
+        form = CollectionForm()
+
+    return render(request, 'cards/add_collection.html', {'form': form})
