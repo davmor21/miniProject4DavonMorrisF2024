@@ -11,7 +11,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">  <!-- Bootstrap Icons -->
     </head>
 
-  <body class="{% if request.session.theme == 'dark' %}dark-mode{% else %}light-mode{% endif %}">
+  <body id="body" class="{% if request.session.theme == 'dark' %}dark-mode{% else %}light-mode{% endif %}">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
       <a class="navbar-brand collapse navbar-collapse" href="{% url 'cards:index' %}">MTG Card Collection</a>
@@ -19,7 +19,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       {% if user.is_authenticated %}  
-        <h4 class="navbar navbar-text">{{ user.get_username }}</h4>
+        <h4 class="navbar navbar-text ">{{ user.get_username }}</h4>
         <form class="logout navbar" action="{% url 'users:logout' %}" method="post">
           {% csrf_token %}
           <button class="logout-button navbar btn btn-primary btn-lg ">Logout</button>
@@ -34,7 +34,7 @@
       {% endif %}
       
       <!-- Dark/Light Mode Toggle Button -->
-      <button class="btn btn-secondary" id="themeToggle" data-toggle="tooltip" data-placement="top" title="Toggle Dark Mode">
+      <button class="btn btn-secondary" id="themeToggle" data-toggle="tooltip" data-placement="top" title="Toggle Theme">
         <i class="bi bi-sun" id="themeIcon"></i> <!-- Sun icon for light mode -->
       </button>
     </nav>
@@ -55,26 +55,28 @@
             // Initialize tooltip
             $('#themeToggle').tooltip();
 
-            // CSRF token
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-            // Check current theme from session
-            const currentTheme = '{% if request.session.theme == "dark" %}dark{% else %}light{% endif %}';
+            // Try to get theme from localStorage, fallback to server session theme
+            let currentTheme = localStorage.getItem('theme') || '{% if request.session.theme == "dark" %}dark{% else %}light{% endif %}';
             const themeIcon = document.getElementById('themeIcon');
+            const themeToggle = document.getElementById('themeToggle');
             const bodyElement = document.body;
             const navElement = document.querySelector('nav'); // Select the navbar element
 
-            // Set the initial theme based on the current theme from session
+            // Apply the theme based on localStorage or session (whichever is available)
             if (currentTheme === 'dark') {
                 bodyElement.classList.add('dark-mode');
                 bodyElement.classList.remove('light-mode');
                 themeIcon.classList.remove('bi-sun');
                 themeIcon.classList.add('bi-moon');
+                navElement.classList.add('navbar-dark');
+                navElement.classList.remove('navbar-light');
             } else {
                 bodyElement.classList.add('light-mode');
                 bodyElement.classList.remove('dark-mode');
                 themeIcon.classList.remove('bi-moon');
                 themeIcon.classList.add('bi-sun');
+                navElement.classList.add('navbar-light');
+                navElement.classList.remove('navbar-dark');
             }
 
             // Toggle theme on button click
@@ -89,6 +91,7 @@
                     navElement.classList.remove('navbar-light');
                     themeIcon.classList.remove('bi-sun');
                     themeIcon.classList.add('bi-moon');
+                    
                 } else {
                     bodyElement.classList.add('light-mode');
                     bodyElement.classList.remove('dark-mode');
@@ -98,6 +101,9 @@
                     themeIcon.classList.add('bi-sun');
                 }
 
+                // Save the theme to localStorage
+                localStorage.setItem('theme', newTheme);
+
                 // Send theme to server and update session
                 $.ajax({
                     url: '/set_theme/',  // The URL to handle the theme change
@@ -105,7 +111,7 @@
                     data: JSON.stringify({ theme: newTheme }),
                     contentType: 'application/json',
                     headers: {
-                        'X-CSRFToken': csrfToken  // Include the CSRF token
+                        'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')  // Include the CSRF token
                     },
                     success: function(response) {
                         // The theme is saved in the session, so no need to reload

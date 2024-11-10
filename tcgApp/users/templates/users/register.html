@@ -2,7 +2,8 @@
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 
-{% block title %}Register{% endblock %} 
+{% block title %}Register{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
@@ -15,7 +16,7 @@
                     <form method="post">
                         {% csrf_token %}
                         {{ form | crispy }}  {# If you're using django-crispy-forms #}
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="submit" class="btn btn-primary">Register</button>
                     </form>
                 </div>
             </div>
@@ -23,12 +24,3 @@
     </div>
 </div>
 {% endblock %}
-
-{#{% block content %}#}
-{#    <h1>Register a New User</h1>#}
-{#    <form class="form-with-validation" action ="/users/register/" method="post">#}
-{#        {% csrf_token %}#}
-{#        {{ form }}#}
-{#    <button class="form-submit">Submit</button>#}
-{#    </form>#}
-{#{% endblock %}#}

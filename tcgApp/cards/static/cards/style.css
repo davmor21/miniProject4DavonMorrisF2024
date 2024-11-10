@@ -1,9 +1,30 @@
 /* Global Navbar Styles */
-nav { display: flex; align-items: center; padding: 0 0.5rem; }
-nav h1 { flex: auto; margin: 0; }
-nav h1 a { text-decoration: none; padding: 0.25rem 0.5rem; }
-nav ul { display: flex; list-style: none; margin: 0; padding: 0; }
-nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
+nav {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+}
+nav h1 {
+    flex: auto;
+    margin: 0;
+}
+nav h1 a {
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+}
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+nav ul li a,
+nav ul li span,
+header .action {
+    display: block;
+    padding: 0.5rem;
+}
+
 
 /* Light Mode Navbar */
 body.light-mode nav {
@@ -19,11 +40,11 @@ body.light-mode .navbar-light .navbar-toggler-icon {
 
 /* Dark Mode Navbar */
 body.dark-mode nav {
-    background-color: #343a40 !important;
+    background-color: #1c1e22 !important; /* Softer dark tone */
     color: white;
 }
 body.dark-mode .navbar-light {
-    background-color: #343a40 !important;
+    background-color: #1c1e22 !important; /* Softer dark tone */
 }
 body.dark-mode .navbar-light .navbar-toggler-icon {
     background-color: white;
@@ -39,6 +60,11 @@ body.dark-mode nav a:hover {
 }
 body.light-mode nav a:hover {
     color: #064666;
+}
+
+/* Light Mode Text Color for Navbar Brand */
+body.light-mode nav a.navbar-brand {
+    color: #000000;
 }
 
 /* Global Body Styles */
@@ -182,3 +208,59 @@ body.light-mode .btn-primary {
     background-color: #377ba8;
     border: none;
 }
+/* Dynamic Styles for Login/Register Buttons */
+body.light-mode .nav-authentication-links .btn-primary {
+    background-color: #377ba8;  /* Primary color */
+    color: white;  /* Ensure text is visible on the button */
+    border: none;
+}
+
+body.light-mode .nav-authentication-links .btn-secondary {
+    background-color: #f8f9fa;  /* Secondary background color */
+    color: #000000;  /* Ensure text is dark and visible */
+    border: 1px solid #ddd;  /* Light border */
+}
+
+body.dark-mode .nav-authentication-links .btn-primary {
+    background-color: #6c757d;  /* Primary color for dark mode */
+    color: white;  /* Text color white */
+    border: none;
+}
+
+body.dark-mode .nav-authentication-links .btn-secondary {
+    background-color: #343a40;  /* Dark background for secondary button */
+    color: white;  /* Ensure text is white */
+    border: 1px solid #555;  /* Darker border */
+}
+/* Dynamic Styles for Login/Register Page */
+body.light-mode .card-header h2,
+body.light-mode .card-body label {
+    color: black; /* Light mode text color */
+}
+
+body.dark-mode .card-header h2,
+body.dark-mode .card-body label {
+    color: black /* Dark mode text color */
+}
+
+/* Button Styles */
+body.light-mode .btn-primary {
+    background-color: #377ba8;  /* Primary color */
+    color: white;  /* Text color on the button */
+    border: none;
+}
+
+body.light-mode .btn-primary:hover {
+    background-color: #064666;  /* Darker color on hover */
+}
+
+body.dark-mode .btn-primary {
+    background-color: #6c757d;  /* Primary color for dark mode */
+    color: white;  /* Text color on the button */
+    border: none;
+}
+
+body.dark-mode .btn-primary:hover {
+    background-color: #5a6268;  /* Darker color on hover */
+}
+
