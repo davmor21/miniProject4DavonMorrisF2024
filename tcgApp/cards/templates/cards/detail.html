@@ -1,0 +1,12 @@
+<form action="{% url 'cards:submit' collection.id %}" method="post">
+{% csrf_token %}
+<fieldset>
+    <legend><h1>{{ collection.collection_name }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% for card in collection.card_set.all %}
+        <input type="radio" name="card" id="card{{ forloop.counter }}" value="{{ card.id }}">
+        <label for="card{ forloop.counter }}">{{ card.card_name }}</label><br>
+    {% endfor %}
+</fieldset>
+<input type="submit" value="Done">
+</form>

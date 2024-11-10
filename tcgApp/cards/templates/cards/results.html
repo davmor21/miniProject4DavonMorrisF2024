@@ -1,0 +1,9 @@
+<h1>{{ collection.collection_name}}</h1>
+
+<ul>
+{% for card in collection.card_set.all %}
+    <li>{{ card.quantity }} : {{ card.card_name }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'cards:detail' collection.id %}">Add another?</a>
