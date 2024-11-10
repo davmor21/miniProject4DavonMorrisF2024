@@ -42,8 +42,14 @@ input[type=submit] { align-self: start; min-width: 10em; }
 .nav-authentication-links:hover{
     color: #064666;
 }
+.nav-username{
+
+}
 .collection-list, .card-list{
     list-style: none;
+}
+.form-with-validation{
+
 }
 #collection-list-link{
     font-size: 24px;

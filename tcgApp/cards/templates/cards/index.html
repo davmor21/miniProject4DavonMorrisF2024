@@ -5,9 +5,9 @@
     </h2>
     &nbsp;
     {% if latest_collection_list %}
-    <ul>
+    <ul class="list-group">
     {% for collection in latest_collection_list %}
-        <li class="collection-list"><a href="{% url 'cards:detail' collection.id %}" id="collection-list-link">{{ collection.collection_name }}</a></li>
+        <li class="collection-list list-group-item"><a href="{% url 'cards:detail' collection.id %}" id="collection-list-link">{{ collection.collection_name }}</a></li>
     {% endfor %}
     </ul>
     {% else %}

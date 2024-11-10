@@ -9,19 +9,26 @@
     <link rel="stylesheet" href="{% static 'cards/style.css' %}?{% now "U" %}">
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{% url 'cards:index' %}">MTG Card Collection</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light  justify-content-between">
+      <a class="navbar-brand collapse navbar-collapse" href="{% url 'cards:index' %}">MTG Card Collection</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       {% if user.is_authenticated %}  
-          <form  class="logout" action="{% url "users:logout" %}" method="post">
+          <h4 class="navbar navbar-text">{{user.get_username}}</h4>
+          <form  class="logout navbar" action="{% url "users:logout" %}" method="post">
             {% csrf_token %}
-            <button class="logout-button">Logout</button>
+            <button class="logout-button navbar btn btn-primary btn-lg ">Logout</button>
           </form>
       {% else %}
-          <a class="nav-authentication-links" href="{% url "users:register" %}">Register</a>  
-          <a class="nav-authentication-links" href="{% url "users:login" %}">Login</a>
+          <a class="nav-authentication-links navbar" href="{% url "users:login" %}">
+                <button class="btn btn-primary btn-lg">Login</button>
+          </a>
+          <a class="nav-authentication-links navbar" href="{% url "users:register" %}">
+                <button class="btn btn-secondary btn-lg">
+                    Register
+                </button>
+          </a>  
       {% endif %} 
     </nav>
     <div class="container">

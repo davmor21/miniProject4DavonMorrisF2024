@@ -77,6 +77,8 @@ Davon Morris
 
 [ Set Login Required for Generic Views](https://stackoverflow.com/questions/2140550/how-to-require-login-for-django-generic-views)
 
+[Crispy Forms](https://simpleisbetterthancomplex.com/tutorial/2018/08/13/how-to-use-bootstrap-4-forms-with-django.html?utm_source=youtube&utm_medium=video_description&utm_campaign=django_auth_tutorial&utm_content=channels)
+
 [Scryfall API](https://scryfall.com/docs/api) - For providing card data and images for Magic: The Gathering.
 
 [Bootstrap Documentation](https://getbootstrap.com/docs/4.5/getting-started/introduction/) - For styling and layout of the web pages.
