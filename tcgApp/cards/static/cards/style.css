@@ -2,6 +2,9 @@ html { font-family: sans-serif; background: #eee; padding: 1rem; }
 body { max-width: 960px; margin: 0 auto; background: white; }
 h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
 a { color: #377ba8; text-decoration: none;}
+a:hover{
+    text-decoration: none;
+}
 hr { border: none; border-top: 1px solid lightgray; }
 nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
 nav h1 { flex: auto; margin: 0; }
@@ -27,6 +30,17 @@ input[type=submit] { align-self: start; min-width: 10em; }
 .card-img {
     max-width: 200px;
     max-height: 300px;
+}
+.nav-authentication-links{
+    color: #377ba8;
+    padding: 10px;
+    font-size: 20px;
+    text-decoration: none;
+    float: right;
+
+}
+.nav-authentication-links:hover{
+    color: #064666;
 }
 .collection-list, .card-list{
     list-style: none;

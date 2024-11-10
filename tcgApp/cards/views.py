@@ -4,23 +4,20 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Card, Collection
 
-class IndexView(generic.ListView):
-    template_name = "cards/index.html"
-    context_object_name = "latest_collection_list"
+@login_required(login_url="/users/login/")
+def IndexView(request):
+    latest_collection_list = Collection.objects.order_by("-pub_date")[:5]
+    return render(request, 'cards/index.html', {'latest_collection_list': latest_collection_list})
 
-    def get_queryset(self):
-        """
-        Return the last five published questions (not including those set to be
-        published in the future).
-        """
-        return Collection.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[
-               :5
-               ]
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
+    login_url = "/users/login/"
+    redirect_field_name = 'redirect_to'
     model = Collection
     template_name = "cards/detail.html"
 
@@ -30,11 +27,14 @@ class DetailView(generic.DetailView):
         """
         return Collection.objects.filter(pub_date__lte=timezone.now())
 
-class ResultsView(generic.DetailView):
+
+class ResultsView(LoginRequiredMixin, generic.DetailView):
+    login_url = "/users/login/"
+    redirect_field_name = 'redirect_to'
     model = Collection
     template_name = "cards/results.html"
 
-
+@login_required(login_url="/users/login/")
 def submit(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
     try:
