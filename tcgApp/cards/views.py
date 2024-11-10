@@ -34,25 +34,39 @@ class ResultsView(LoginRequiredMixin, generic.DetailView):
     model = Collection
     template_name = "cards/results.html"
 
+
 @login_required(login_url="/users/login/")
 def submit(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
-    try:
-        selected_card = collection.card_set.get(pk=request.POST["card"])
-    except (KeyError, Card.DoesNotExist):
-        # Redisplay the collection submission form.
-        return render(
-            request,
-            "cards/detail.html",
-            {
-                "collection": collection,
-                "error_message": "You didn't select a card.",
-            },
-        )
-    else:
-        selected_card.quantity = F("quantity") + 1
-        selected_card.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
+
+    if request.method == "POST":
+        # Step 1: Handle deletions
+        delete_card_ids = request.POST.getlist("delete_card_ids[]")
+        if delete_card_ids:
+            # Delete cards that match the IDs in delete_card_ids for this collection
+            Card.objects.filter(id__in=delete_card_ids, collection=collection).delete()
+
+        # Step 2: Handle adding new cards
+        new_card_names = request.POST.getlist("new_card_name[]")
+        new_card_quantities = request.POST.getlist("new_card_quantity[]")
+        for name, quantity in zip(new_card_names, new_card_quantities):
+            if name:  # Add only if a name is provided
+                Card.objects.create(
+                    collection=collection,
+                    card_name=name,
+                    quantity=int(quantity)
+                )
+
+        # Step 3: Update quantities for existing cards
+        for card in collection.card_set.all():
+            quantity_field_name = f"quantity_{card.id}"
+            if quantity_field_name in request.POST:
+                new_quantity = request.POST.get(quantity_field_name)
+                if new_quantity is not None:
+                    card.quantity = int(new_quantity)
+                    card.save()
+
+        # Redirect after processing
         return HttpResponseRedirect(reverse("cards:results", args=(collection.id,)))
+
+    return render(request, "cards/detail.html", {"collection": collection})

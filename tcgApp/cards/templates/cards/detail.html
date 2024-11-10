@@ -1,15 +1,126 @@
 {% extends 'base.html' %}
+{% block title %}Detail{% endblock %}
+
 {% block content %}
-    <form action="{% url 'cards:submit' collection.id %}" method="post">
+<form id="cardForm" action="{% url 'cards:submit' collection.id %}" method="post">
     {% csrf_token %}
     <fieldset>
         <legend><h1>{{ collection.collection_name }}</h1></legend>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+        <!-- Section for adding new cards -->
+        <div id="new-cards-section">
+            <h3>Add New Cards</h3>
+            <div class="mb-3 row align-items-center new-card">
+                <div class="col-md-6">
+                    <input type="text" name="new_card_name[]" class="form-control" placeholder="Enter new card name">
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="number" name="new_card_quantity[]" class="form-control" value="1" min="1">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" onclick="decrement(this)">-</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="increment(this)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-danger" onclick="removeCard(this)">Remove</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary mt-2" onclick="addCardInput()">Add Another Card</button>
+
+        <!-- Existing cards list with editable quantities -->
+        <h3 class="mt-4">Existing Cards</h3>
         {% for card in collection.card_set.all %}
-            <input type="radio" name="card" id="card{{ forloop.counter }}" value="{{ card.id }}">
-            <label for="card{ forloop.counter }}">{{ card.card_name }}</label><br>
+            <div class="mb-3 row align-items-center existing-card" id="card_{{ card.id }}">
+                <div class="col-md-6">
+                    <label class="form-label">{{ card.card_name }}</label>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="number" name="quantity_{{ card.id }}" class="form-control" value="{{ card.quantity }}" min="0">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" onclick="decrement(this)">-</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="increment(this)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-danger" onclick="removeCardFromCollection({{ card.id }})">Remove</button>
+                </div>
+            </div>
         {% endfor %}
+
     </fieldset>
-    <input type="submit" value="Done">
-    </form>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<script>
+    function increment(button) {
+        const input = button.closest('.input-group').querySelector('input');
+        input.stepUp();
+    }
+
+    function decrement(button) {
+        const input = button.closest('.input-group').querySelector('input');
+        input.stepDown();
+    }
+
+    function addCardInput() {
+        const newCardDiv = document.createElement('div');
+        newCardDiv.className = 'mb-3 row align-items-center new-card';
+        newCardDiv.innerHTML = `
+            <div class="col-md-6">
+                <input type="text" name="new_card_name[]" class="form-control" placeholder="Enter new card name">
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <input type="number" name="new_card_quantity[]" class="form-control" value="1" min="1">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" onclick="decrement(this)">-</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="increment(this)">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="button" class="btn btn-danger" onclick="removeCard(this)">Remove</button>
+            </div>
+        `;
+        document.getElementById('new-cards-section').appendChild(newCardDiv);
+    }
+
+    function removeCard(button) {
+        button.closest('.new-card').remove();
+    }
+
+    function removeCardFromCollection(cardId) {
+        let form = document.getElementById("cardForm");
+        if (form) {
+            // Create a hidden input to hold the cardId to be deleted
+            let input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "delete_card_ids[]";  // This is the key in the form
+            input.value = cardId;              // The value is the card's ID
+    
+            // Append the hidden input to the form
+            form.appendChild(input);
+        } else {
+            console.error("Form with id 'cardForm' not found!");
+        }
+
+        // Log before trying to find the card element
+        console.log("Trying to find card with id 'card-" + cardId + "'");
+
+        // Attempt to hide the card element in the DOM
+        let cardElement = document.getElementById("card_" + cardId);
+        if (cardElement) {
+            cardElement.style.display = "none";  // Hide the card element
+            console.log("Card with id 'card-" + cardId + "' hidden.");
+        } else {
+            console.error("Card element with id 'card-" + cardId + "' not found!");
+        }
+    }
+</script>
 {% endblock %}
