@@ -1,9 +1,16 @@
-{% if latest_collection_list %}
+{% extends 'base.html' %}
+{% block content %}
+    <h2>
+        My Collections
+    </h2>
+    &nbsp;
+    {% if latest_collection_list %}
     <ul>
     {% for collection in latest_collection_list %}
-        <li><a href="{% url 'cards:detail' collection.id %}">{{ collection.collection_name }}</a></li>
+        <li class="collection-list"><a href="{% url 'cards:detail' collection.id %}" id="collection-list-link">{{ collection.collection_name }}</a></li>
     {% endfor %}
     </ul>
-{% else %}
-    <p>No collections are available.</p>
-{% endif %}
+    {% else %}
+        <p>No collections are available.</p>
+    {% endif %}
+{% endblock %}
